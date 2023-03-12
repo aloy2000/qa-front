@@ -3,13 +3,19 @@ import { css } from "@emotion/react";
 import React from "react";
 import { UserIcon } from "../../Icon/UserIcon";
 import { fontFamily, fontSize, gray1, gray2, gray5 } from "../../Styles";
-import { Link } from 'react-router-dom';
-
-const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  console.log(e.currentTarget.value);
-};
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
 
 export const Header = () => {
+  const navigate = useNavigate();
+  const { register, handleSubmit } = useForm<FormData>();
+  const [searchParams] = useSearchParams();
+  const criteria = searchParams.get("criteria") || "";
+
+  const submitForm = (data: FormData) => {
+    navigate(`search?criteria=${data.search}`);
+  };
+
   return (
     <div
       css={css`
@@ -37,26 +43,29 @@ export const Header = () => {
       >
         Q & A
       </Link>
-      <input
-        type="text"
-        placeholder="Search ..."
-        onChange={handleSearchInputChange}
-        css={css`
-          box-sizing: border-box;
-          font-family: ${fontFamily};
-          font-size: ${fontSize};
-          padding: 8px 10px;
-          border: 1px solid ${gray5};
-          border-radius: 3px;
-          color: ${gray2};
-          background-color: white;
-          width: 200px;
-          height: 30px;
-          :focus {
-            outline-color: ${gray5};
-          }
-        `}
-      />
+      <form onSubmit={handleSubmit(submitForm)}>
+        <input
+          type="text"
+          placeholder="Search ..."
+          defaultValue={criteria}
+          {...register("search")}
+          css={css`
+            box-sizing: border-box;
+            font-family: ${fontFamily};
+            font-size: ${fontSize};
+            padding: 8px 10px;
+            border: 1px solid ${gray5};
+            border-radius: 3px;
+            color: ${gray2};
+            background-color: white;
+            width: 200px;
+            height: 30px;
+            :focus {
+              outline-color: ${gray5};
+            }
+          `}
+        />
+      </form>
       <Link
         to="/signin"
         css={css`
@@ -80,4 +89,8 @@ export const Header = () => {
       </Link>
     </div>
   );
+};
+
+type FormData = {
+  search: string;
 };

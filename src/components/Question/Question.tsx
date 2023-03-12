@@ -33,7 +33,7 @@ export const Question = (props: IProps) => {
         <div
           css={css`
             padding-bottom: 10px;
-            font-size: 15px;
+            font-size: 18px;
             color: ${gray2};
           `}
         >
@@ -42,7 +42,13 @@ export const Question = (props: IProps) => {
             : props.data.content}
         </div>
       )}
-      <div>
+      <div
+        css={css`
+          padding-bottom: 10px;
+          font-size: 14px;
+          color: ${gray2};
+        `}
+      >
         {`Asked by ${
           props.data.userName
         } on ${props.data.created.toLocaleDateString()} ${props.data.created.toLocaleTimeString()}`}

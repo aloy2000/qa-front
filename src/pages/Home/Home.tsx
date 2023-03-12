@@ -1,30 +1,41 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import React from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { QuestionList } from "../../components/Question/QuestionList";
 import { getUnansweredQuestions } from "../../data/QuestionData";
 import { Page } from "../../components/Child/Page";
 import { PageTitle } from "../../components/Child/PageTitle";
-import { QuestionData } from "../../interfaces/interface";
 import { PrimaryButton } from "../../Styles";
+import { useSelector, useDispatch } from "react-redux";
+import {
+  AppState,
+  gettingUnansweredQuestionsAction,
+  gotUnansweredQuestionsAction,
+} from "../../components/redux/store/Store";
 
 export const Home = () => {
-  const [questions, setQuestions] = React.useState<QuestionData[]>([]);
-  const [questionLoading, setQuestionLoading] = React.useState(true);
+  // const [questions, setQuestions] = React.useState<QuestionData[]>([]);
+  // const [questionLoading, setQuestionLoading] = React.useState(true);
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
+  const questions = useSelector(
+    (state: AppState) => state.questions.unanswered
+  );
+  const questionsLoading = useSelector(
+    (state: AppState) => state.questions.loading
+  );
   React.useEffect(() => {
     async function doGetUnansweredQuestions() {
+      dispatch(gettingUnansweredQuestionsAction());
       const unansweredQuestions = await getUnansweredQuestions();
-      setQuestions(unansweredQuestions);
-      setQuestionLoading(false);
+      dispatch(gotUnansweredQuestionsAction(unansweredQuestions));
     }
     doGetUnansweredQuestions();
   }, []);
 
   const handleAskQuestionClick = () => {
-    navigate("ask")
+    navigate("ask");
   };
 
   return (
@@ -41,10 +52,10 @@ export const Home = () => {
           Ask a question
         </PrimaryButton>
       </div>
-      {questionLoading ? (
+      {questionsLoading ? (
         <div>Loading...</div>
       ) : (
-        <QuestionList data={questions}  />
+        <QuestionList data={questions} />
       )}
     </Page>
   );
